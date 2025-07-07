@@ -1,0 +1,9 @@
+services:
+
+  api: 
+    image: pythonapp:1.0
+    restart: always
+    environment:
+      DB_URL: postgresql+psycopg2://scott:tiger@localhost:5432/mydatabase
+    ports:
+      - 127.0.0.1:86:8080

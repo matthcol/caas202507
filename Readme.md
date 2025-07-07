@@ -8,6 +8,9 @@ docker ps -a
 ```
 
 ### PostgreSQL
+
+NB: source code Dockerfile here: https://github.com/docker-library/postgres/blob/master/17/bookworm/Dockerfile
+
 Start/create a container (server mode):
 
 ```
@@ -87,9 +90,12 @@ docker compose start db
 Data Persistence
 ```
 docker compose exec -it db psql -U postgres
-create table t(a int);
-insert into t (a) values (1234);
-select * from t;
+
+# create table t(a int);
+# insert into t (a) values (1234);
+# select * from t;
+
+# data initialized from directory ./sql
 ```
 
 Delete composition and recreate it. Check data is still here.
@@ -98,7 +104,7 @@ docker compose down
 docker compose up -d
 docker compose exec -it db psql -U postgres
 \d
-select * from t;
+select title, year, duration from movie;
 
 ```
 
@@ -111,6 +117,15 @@ Destroy everything:
 ```
 docker compose down
 docker volume rm postgresql-dbmovie_moviedata
+```
+
+## Environment Files
+Default: .env
+Other: --env-file .env-test
+
+```
+docker compose up -d
+docker compose --env-file .env-test -p postgreql-dbmovie-test  up -d
 ```
 
 

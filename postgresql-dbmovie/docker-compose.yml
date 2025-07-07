@@ -2,9 +2,12 @@ services:
   db:
     image: postgres:latest
     environment:
-      POSTGRES_PASSWORD: mysuperpassword
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - moviedata:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
 
 volumes:
   moviedata:
