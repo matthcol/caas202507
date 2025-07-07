@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: mysuperpassword
+    volumes:
+      - moviedata:/var/lib/postgresql/data
+
+volumes:
+  moviedata:
