@@ -12,7 +12,7 @@ services:
   api:
     build: api
     environment:
-      DB_URL: url_to_reach_db
+      DB_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     ports:
       - ${API_PORT:-8080}:8080
 

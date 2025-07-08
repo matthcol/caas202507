@@ -20,4 +20,4 @@ EXPOSE 8080
 # if both, final command is the concatenation of ENTRYPOINT + CMD
 
 # ENTRYPOINT [ "executable" ]
-CMD [ "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080" ]
+CMD [ "uvicorn", "movieapi.main:app", "--host", "0.0.0.0", "--port", "8080" ]

@@ -128,6 +128,25 @@ docker compose up -d
 docker compose --env-file .env-test -p postgreql-dbmovie-test  up -d
 ```
 
+## API Python: Dockerfile
+
+```
+cd python-src-api
+docker build . -t movieapi:0.1 
+docker run -p 8080:8080 --name movieapi -d movieapi:0.1
+```
+
+Access API with a web browser at localhost:8080/docs
+
+## Composition
+```
+docker compose -p moviestack up -d
+docker compose -p moviestack down
+docker compose -p moviestack down api
+docker compose -p moviestack up -d
+docker compose -p moviestack up -d api
+```
+
 
 
 
