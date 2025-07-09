@@ -7,12 +7,7 @@ RUN pip install -r requirements.txt
 
 COPY src .
 
-# ENV DB_URL=''
-ENV POSTGRES_USER=''
-ENV POSTGRES_PASSWORD=''
-ENV POSTGRES_HOST=''
-ENV POSTGRES_PORT=''
-ENV POSTGRES_DB=''
+ENV DB_URL=''
 
 EXPOSE 8080
 

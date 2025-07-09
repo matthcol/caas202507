@@ -10,3 +10,4 @@ kubectl apply -f dbmovie.deployment.yml
 kubectl apply -f dbmovie.service.yml 
 # API
 kubectl apply -f movieapi.deployment.yml 
+kubectl apply -f movieapi.service.yml 

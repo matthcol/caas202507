@@ -288,6 +288,29 @@ kubectl run psql-client --rm -it -n mdb --image=postgres:17.5 --restart=Never --
   psql -h dbmovie -p 5432 -U movie -d dbmovie
 ```
 
+Test API en //
+
+Depuis minikube:
+```
+seq 50 | xargs -n1 -P10 -I{} curl -s -w "[%{remote_ip}] %{http_code} %{time_total}s\n" -o /dev/null http://10.104.10.91:8080/movies/
+```
+
+Depuis Linux host et minikube tunnel:
+```
+seq 1000 | xargs -n1 -P10 -I{} curl -s -w "[%{remote_ip}] %{http_code} %{time_total}s\n" -o /dev/null http://127.0.0.1:8080/movies/
+```
+
+Augmentation temporaire de conteneur d'API:
+```
+kubectl scale -n mdb deployment/movieapi --replicas=10
+```
+
+Supervision
+```
+minikube addons enable metrics-server
+```
+
+
 
 
 
