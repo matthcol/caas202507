@@ -243,6 +243,28 @@ select * from person; -- Clint still here ?
 delete from person; -- cleanup
 ```
 
+Inject data with Copy + Exec:
+```
+kubectl cp -n mdb ../composition/sql/02-data-persons.sql.gz dbmovie-895ddfc94-fgcpb:/tmp
+kubectl exec -n mdb -it pod/dbmovie-895ddfc94-fgcpb -- ls -l /tmp
+kubectl exec -n mdb -it pod/dbmovie-895ddfc94-fgcpb -- bash -c 'gunzip -c /tmp/02-data-persons.sql.gz | psql -U movie -d dbmovie'
+kubectl exec -n mdb -it pod/dbmovie-895ddfc94-fgcpb -- rm /tmp/02-data-persons.sql.gz
+kubectl exec -n mdb -it pod/dbmovie-895ddfc94-fgcpb -- ls -l /tmp
+kubectl exec -n mdb -it pod/dbmovie-895ddfc94-fgcpb -- psql -U movie -d dbmovie -f /docker-entrypoint-initdb.d/06-realign-seq.sql
+```
+
+## Summary
+File `deploy.sh`
+
+To redo all, suppress namespace before: `kubectl delete namespace mdb`
+
+Nb: keyword all references pod, replica set, deployment and services
+```
+kubectl get all -n mdb
+kubectl delete all -n mdb
+```
+
+
 
 
 
