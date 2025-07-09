@@ -1,3 +1,5 @@
+#!/bin/bash
+
 kubectl create namespace mdb
 # DB
 kubectl apply -f dbmovie.env.configmap.yml
