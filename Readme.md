@@ -139,6 +139,7 @@ docker run -p 8080:8080 --name movieapi -d movieapi:0.1
 Access API with a web browser at localhost:8080/docs
 
 ## Composition
+Create and destroy containers:
 ```
 docker compose -p moviestack up -d
 docker compose -p moviestack down
@@ -147,6 +148,71 @@ docker compose -p moviestack up -d
 docker compose -p moviestack up -d api
 ```
 
+Rebuild Image Api
+```
+docker compose -p moviestack build api
+# down / up service api
+```
+
+Supervision
+```
+docker compose -p moviestack ps -a
+
+docker compose -p moviestack logs db
+docker compose -p moviestack logs api
+
+docker compose -p moviestack exec -it db bash
+docker compose -p moviestack exec -it api bash 
+```
+
+Lifecycle
+```
+docker compose -p moviestack start api
+docker compose -p moviestack stop api
+```
+
+Network: specific network for the composition (moviestack_default)
+```
+docker network ls
+docker inspect  moviestack-api-1
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'  moviestack-api-1
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'  moviestack-db-1
+```
+
+Ajout de conteneurs
+```
+# multi files
+docker compose -f docker-compose-db-api.yml -f docker-compose-front.yml config
+docker compose -p moviestack -f docker-compose-db-api.yml -f docker-compose-front.yml up -d
+docker compose -p moviestack ps -a
+
+# with include (docker-compose.yml):
+docker compose  config
+docker compose  -p moviestack up -d
+
+# + override (docker-compose.yml + docker-compose.override.yml):
+docker compose config
+docker compose -p moviestack up -d
+```
+
+Start a composition with a filtered list of services (front is not started)
+```
+docker compose -p moviestack  up -d api db
+```
+
+or use profiles key in the service
+```
+# without front (profile optional not activated)
+docker compose -p moviestack  up -d 
+
+# without front (profile optional activated)
+docker compose -p moviestack --profile optional up -d 
+```
+
+Cluster, replicas (deprecated => swarm or kube). Limit: port mapping.
+```
+docker compose -p moviestack up -d --scale api=2
+```
 
 
 

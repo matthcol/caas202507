@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:${DB_TAG:-latest}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
+      
+  api:
+    build: api
+    environment:
+      DB_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    # ports:
+    #   - ${API_PORT:-8080}:8080
+
+  # dbadmin:
+
+  # front:
+
+volumes:
+  db-data:
+  db-admin-config:

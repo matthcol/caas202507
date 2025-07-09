@@ -1,0 +1,7 @@
+services:
+  front:
+    image: nginx:${FRONT_TAG:-latest}
+    ports:
+      - ${FRONT_PORT:-80}:80
+    # profiles:
+    #   - optional

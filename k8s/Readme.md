@@ -310,6 +310,17 @@ Supervision
 minikube addons enable metrics-server
 ```
 
+Voir avec dashboard ou `kubectl top pods -n mdb`
+
+
+## Update et Rollout
+
+```
+docker build api-v2.0 -t movieapi:2.0
+kubectl set image deploy -l app=movieapi -n mdb  movieapi=movieapi:2.0 
+```
+
+
 
 
 
