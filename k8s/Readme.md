@@ -253,6 +253,16 @@ kubectl exec -n mdb -it pod/dbmovie-895ddfc94-fgcpb -- ls -l /tmp
 kubectl exec -n mdb -it pod/dbmovie-895ddfc94-fgcpb -- psql -U movie -d dbmovie -f /docker-entrypoint-initdb.d/06-realign-seq.sql
 ```
 
+## API
+Plan:
+- build image movieapi:1.0 (shortcut: directly dind)
+- deploy api with a replica set of 3
+
+```
+docker build api-v1.0 -t movieapi:1.0 
+
+
+
 ## Summary
 File `deploy.sh`
 
@@ -264,7 +274,19 @@ kubectl get all -n mdb
 kubectl delete all -n mdb
 ```
 
+Test one shot dur service database en interne avec un conteur client one shot:
 
+Version linux
+```
+kubectl run psql-client --rm -it -n mdb --image=postgres:17.5 --restart=Never -- \
+  psql -h dbmovie -p 5432 -U movie -d dbmovie
+```
+
+Version powershell
+```
+kubectl run psql-client --rm -it -n mdb --image=postgres:17.5 --restart=Never -- `
+  psql -h dbmovie -p 5432 -U movie -d dbmovie
+```
 
 
 

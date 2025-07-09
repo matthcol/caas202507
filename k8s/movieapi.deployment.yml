@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: mdb
+  name: movieapi
+  labels:
+    app: movieapi
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: movieapi
+  template:
+    metadata:
+      labels:
+        app: movieapi
+    spec:
+      containers:
+      - name: movieapi
+        image: movieapi:1.0
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+          - containerPort: 8080
+        env:
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: db-env
+                key: POSTGRES_DB
+
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: POSTGRES_USER
+
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: POSTGRES_PASSWORD
+
+          - name: DB_URL
+            value: "postgresql+psycopg2://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@dbmovie:5432/$(POSTGRES_DB)"
