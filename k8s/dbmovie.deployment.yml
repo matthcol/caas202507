@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: dbmovie
-        image: postgres:17
+        image: postgres:17.5
         resources:
           limits:
             memory: "512Mi"
@@ -47,7 +47,19 @@ spec:
                 configMapKeyRef:
                   name: db-env
                   key: POSTGRES_DB
+        volumeMounts:
+          - mountPath: /docker-entrypoint-initdb.d
+            name: db-init
+          - mountPath: /var/lib/postgresql/data
+            name: db-storage
+      volumes:
+        - name: db-init
+          configMap:
+            name: db-init
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: db-pvc
 
-          # TODO: configMap (env variables, SQL scripts)
+
           # TODO: persistent volume pour la Data
           # TODO: rolling update / rollback

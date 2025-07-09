@@ -29,6 +29,11 @@ NB: minikube is using dind
 docker exec -it minikube docker ps -a
 ```
 
+Shortcuts dind (follow instructions):
+```
+minikube docker-env
+```
+
 ### Deployment
 ```
 kubectl apply -f nginx.deployment.yml
@@ -181,6 +186,13 @@ kubectl delete cm db-env -n mdb
 
 - Yaml file + apply
 
+- CLI from file (binary data):
+```
+kubectl create cm db-init -n mdb --from-file=sql
+kubectl get cm db-init -n mdb -o jsonpath='{.data}'
+kubectl describe cm db-init -n mdb 
+```
+
 ### Secrets
 CLI or Yaml, multiple crypto algorithms (generic, ...):
 
@@ -189,6 +201,7 @@ kubectl create secret generic db-secret -n mdb --from-literal=POSTGRES_USER=movi
 kubectl get secret db-secret -n mdb -o jsonpath='{.data}'
 ```
 
+## Project MDB
 
 ### Namespaces
 ```
@@ -196,6 +209,42 @@ kubectl get namespaces
 kubectl get ns
 kubectl create ns mdb
 ```
+
+### DB deployment
+```
+kubectl get po,cm,secret,deployment -n mdb
+kubectl apply -f .\dbmovie.deployment.yml 
+kubectl exec -n mdb -it pod/dbmovie-7c76ff74b9-4dn4f -- bash
+```
+
+NB: init data
+- SQL scripts in a config map mounted to  /docker-entrypoint-initdb.d
+- post install k8s: initContainer
+- post install manuallly: cp + exec
+
+## Data Persistence 
+
+```
+kubectl apply -f dbmovie.volume.yml
+kubectl get pvc -n mdb
+kubectl apply -f dbmovie.deployment.yml
+kubectl get po -n mdb
+```
+
+Test:
+```
+kubectl exec -n mdb -it pod/dbmovie-895ddfc94-gd6js -- psql -U movie -d dbmovie
+insert into person (name) values ('Clint Eastwood');
+\q
+kubectl scale deployment -n mdb -l app=dbmovie --replicas=0
+kubectl scale deployment -n mdb -l app=dbmovie --replicas=1  
+kubectl exec -n mdb -it pod/dbmovie-895ddfc94-fgcpb -- psql -U movie -d dbmovie
+select * from person; -- Clint still here ?
+delete from person; -- cleanup
+```
+
+
+
 
 
 
