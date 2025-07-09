@@ -1,0 +1,207 @@
+# Orchestraion with Kubernetes
+
+## Minikube
+Install minikube: https://minikube.sigs.k8s.io/docs/start
+
+### Start minikube
+```
+minikube start
+minikube start --driver=docker
+
+minikube status
+minikube start
+minikube stop
+```
+
+### Management
+```
+kubectl get pods
+kubectl get pods -A
+kubectl get pod -A
+kubectl get po -A
+
+# or kubectl downloaded inside minikube
+minikube kubectl -- get pods -A
+```
+
+NB: minikube is using dind
+```
+docker exec -it minikube docker ps -a
+```
+
+### Deployment
+```
+kubectl apply -f nginx.deployment.yml
+kubectl get pod
+kubectl get deployment
+kubectl get replicaset
+
+kubectl get po,rs,deployment,svc
+```
+
+Apply changes in the deployment:
+- from file:
+```
+kubectl apply -f nginx.deployment.yml
+```
+- cli:
+```
+kubectl scale --replicas=10 deployment/front
+kubectl scale --replicas=2 deployment/front
+```
+
+Deployment with CLI:
+```
+kubectl create deployment echos --image=kicbase/echo-server:1.0 --replicas=3
+```
+
+### Pod without deployment
+```
+kubectl run echosolo --image=kicbase/echo-server:1.0
+```
+
+### Dashboard
+```
+ minikube dashboard
+```
+
+### Management with labels
+```
+kubectl get po,rs,deployment,svc --show-labels
+
+kubectl get po,rs,deployment,svc -l app=echos
+kubectl get deployment -l app=echos
+kubectl scale deployment -l app=echos --replicas=4
+
+# stop:
+kubectl scale deployment -l app=echos --replicas=0
+
+# start
+kubectl scale deployment -l app=echos --replicas=3
+
+# delete
+kubectl delete deployment -l app=echos
+kubectl delete pod -l run=echosolo
+```
+
+NB: delete deployment => delete deployment, replicaset and pods
+
+Add labels:
+- yaml config + apply
+- cli:
+
+```
+kubectl label deployment -l app=front country=fr
+kubectl get deployment -l country=fr,buisness=selling
+
+kubectl create deployment echos --image=kicbase/echo-server:1.0 --replicas=3
+kubectl label deployment -l app=echos country=fr buisness=music
+
+kubectl get deployment -l country=fr
+kubectl get deployment -l country=fr,buisness=selling
+
+kubectl label deployment -l country=fr,buisness=selling tva=20
+```
+
+Update label:
+- edit yaml config + apply
+- cli:
+
+```
+kubectl label --overwrite deployment -l app=echos buisness=sound
+```
+
+Delete
+- edit yaml config + apply
+- cli:
+
+```
+kubectl label deployment -l app=front tva-
+```
+
+### Services
+
+Yaml: nginx.service.yml
+```
+kubectl apply -f nginx.service.yml
+kubectl get svc 
+```
+
+Result:
+NAME            TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+front-service   LoadBalancer   10.111.4.54   <pending>     85:30482/TCP   7m14s
+
+Locally in minikube (`docker exec -it minikube bash`):
+```
+curl -G 10.111.4.54:85 
+```
+
+Externally with tunnel (minikube tunnel):
+```
+curl -G 127.0.0.1:85 
+```
+
+Service type NodePort
+
+cli (expose pod or expose deployment): 
+```
+kubectl expose pod echosolo --type=NodePort --port 8080
+kubectl expose pod echosolo --type=NodePort --port 8081 --target-port 8080 --name echosolo-service
+```
+
+NB: pour choisir le nodePort, uniquement en Yaml
+
+Expose service externally (Minikube)
+```
+minikube service echosolo-service --url
+```
+
+### ConfigMap
+- CLI from litteral:
+```
+kubectl create configmap db-env --from-literal=POSTGRES_USER=movie --from-literal=POSTGRES_DB=dbmovie
+kubectl get configmap
+kubectl get cm
+kubectl get cm db-env -o json
+kubectl get cm db-env -o jsonpath='{.data}'
+kubectl describe cm db-env
+kubectl delete cm db-env
+
+kubectl create configmap db-env --from-literal=POSTGRES_DB=dbmovie -n mdb
+kubectl get cm -n mdb
+kubectl delete cm db-env -n mdb
+```
+
+- CLI from environnement file
+```
+kubectl create configmap db-env --from-env-file=.envdb -n mdb
+kubectl get cm db-env -n mdb -o jsonpath='{.data}'
+kubectl delete cm db-env -n mdb
+```
+
+- Yaml file + apply
+
+### Secrets
+CLI or Yaml, multiple crypto algorithms (generic, ...):
+
+```
+kubectl create secret generic db-secret -n mdb --from-literal=POSTGRES_USER=movie '--from-literal=POSTGRES_PASSWORD=aR@$~*%!!!aDxGU|**#'
+kubectl get secret db-secret -n mdb -o jsonpath='{.data}'
+```
+
+
+### Namespaces
+```
+kubectl get namespaces
+kubectl get ns
+kubectl create ns mdb
+```
+
+
+
+
+
+
+
+
+

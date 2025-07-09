@@ -1,28 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: front
+  name: api
   labels:
-    app: front
-    type: nginx
-    buisness: aeronautic
+    app: api
 spec:
-  replicas: 2
   selector:
     matchLabels:
-      app: front
+      app: api
   template:
     metadata:
       labels:
-        app: front
+        app: api
     spec:
       containers:
-      - name: front
-        image: nginx:1.29
+      - name: api
+        image: <Image>
         resources:
           limits:
             memory: "128Mi"
-            cpu: "125m"
+            cpu: "500m"
         ports:
-        - containerPort: 80
-
+        - containerPort: <Port>

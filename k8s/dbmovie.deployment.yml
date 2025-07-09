@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: mdb
+  name: dbmovie
+  labels:
+    app: dbmovie
+spec:
+  selector:
+    matchLabels:
+      app: dbmovie
+  template:
+    metadata:
+      labels:
+        app: dbmovie
+    spec:
+      containers:
+      - name: dbmovie
+        image: postgres:17
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5432
+        env:
+          ## Direct definition
+          # - name: POSTGRES_PASSWORD
+          #   value: "superpassword"
+          # - name: POSTGRES_USER
+          #   value: "movie"
+          # - name: POSTGRES_DB
+          #   value: "dbmovie"
+          ## From configMap or secrets
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: db-env
+                  key: POSTGRES_DB
+
+          # TODO: configMap (env variables, SQL scripts)
+          # TODO: persistent volume pour la Data
+          # TODO: rolling update / rollback
